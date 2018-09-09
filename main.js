@@ -20,26 +20,24 @@ google.maps.event.addListener(uscMarker, 'click', (event) => {
   infoWindow.open(map);
 });
 
-google.maps.event.addListener(map, 'click', (event) => {
-  let position = event.latLng;
+$('form').on('submit', function(event) {
+  event.preventDefault();
 
-  let marker = new google.maps.Marker({
-    map,
-    position
-  });
+  let searchTerm = $('input[type=search]').val();
+  $('input').val('');
 
-  google.maps.event.addListener(marker, 'click', (event) => {
-    let geocoder = new google.maps.Geocoder();
+  let geocoder = new google.maps.Geocoder();
 
-    geocoder.geocode({
-      location: position
-    }, (geocoderResults) => {
-      let infoWindow = new google.maps.InfoWindow({
-        content: geocoderResults[0].formatted_address,
-        position
-      });
+  geocoder.geocode({
+    address: searchTerm
+  }, (geocoderResults) => {
+    let position = geocoderResults[0].geometry.location;
+    map.setCenter(position);
 
-      infoWindow.open(map);
+    let marker = new google.maps.Marker({
+      map,
+      position,
+      animation: google.maps.Animation.DROP,
     });
   });
 });
